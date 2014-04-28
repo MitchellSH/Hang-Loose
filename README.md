@@ -1,6 +1,6 @@
 Hang-Loose
 ===
-Pupose
+Purpose
 ===
 Technology/Dependencies
 ===
