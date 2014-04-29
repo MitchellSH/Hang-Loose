@@ -8,7 +8,13 @@ To keep track of all the times a individual uses the "Hang-loose" hand expressio
 
 Technology/Dependencies
 ===
+SQLite
+
+Ruby 2.1.1
+
 Setup
 ===
+Pending real code.
+
 Usage Guide
 ===
