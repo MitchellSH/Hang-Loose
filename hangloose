@@ -1,3 +1,63 @@
 #!/usr/bin/env ruby
 
-puts 'hello'
+$LOAD_PATH << 'lib'
+$LOAD_PATH << 'models'
+
+require 'environment'
+Environment.environment = ENV["ENVIRONMENT"] || "production"
+$stderr = $stdout
+
+require 'person'
+
+def menu
+<<EOS
+Hello there! What would you want to do? (Enter the number for your choice)
+  1. Enter your hangloose count.
+  2. View your hangloose graph.
+  3. Just hangloose.
+EOS
+end
+
+def add_hangloose
+  puts "How many times did you hangloose?"
+  takes_number = gets
+  return unless takes_number
+  takes_number.chomp!
+  number = Person.new(takes_number)
+  if number.save
+    puts "#{takes_number} has been added."
+    record_desired_outcomes_for(number)
+  else
+    puts number.errors
+    add_hangloose
+  end
+end
+
+def view_graph
+  puts "Your graph for the day!"
+end
+
+def just_hang
+  puts "Just hangloose man!"
+end
+
+
+
+def get_menu_selection
+  puts menu
+  input = gets
+  return unless input
+  input.chomp!
+  if input == "1"
+    add_hangloose
+  elsif input == "2"
+    view_graph
+  elsif input == "3"
+    just_hang
+  else
+    puts "'4' not a valid selection"
+    get_menu_selection
+  end
+end
+
+get_menu_selection

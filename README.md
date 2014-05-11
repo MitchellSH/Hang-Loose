@@ -18,3 +18,5 @@ Pending real code.
 
 Usage Guide
 ===
+
+> ./hangloose
