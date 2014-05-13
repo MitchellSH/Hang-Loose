@@ -7,55 +7,281 @@ require 'environment'
 Environment.environment = ENV["ENVIRONMENT"] || "production"
 $stderr = $stdout
 
-require 'person'
+require 'smart_colored/extend'
 
 def menu
 <<EOS
-Hello there! What would you want to do? (Enter the number for your choice)
-  1. Enter your hangloose count.
-  2. View your hangloose graph.
-  3. Just hangloose.
+
+            ░▐█░▐█ ▄▀▄ █▄─█ ▄▀▀───░██─── ▄▀▄ ▄▀▄ ▄▀▀ █▀▀
+            ░▐████ █▀█ █─▀█ █─▀▌──░██─── █─█ █─█ ─▀▄ █▀▀
+            ░▐█░▐█ ▀─▀ ▀──▀ ▀▀▀───░██▄▄█ ─▀─ ─▀─ ▀▀─ ▀▀▀
+
+
+
+        ====================================================
+
+         Aloha! What would you want to do? (Enter the number for your choice)
+          --------------------
+          1. Add a person.
+          --------------------
+          2. Add hangloose count.
+          --------------------
+          3. Update hangloose count.
+          --------------------
+          4. View hangloose graph.
+          --------------------
+          5. Clear your hangloose count.
+          --------------------
+          6. Just hangloose.
+          --------------------
+
+        ====================================================
 EOS
+
 end
 
-def add_hangloose
-  puts "How many times did you hangloose?"
-  takes_number = gets
-  return unless takes_number
-  takes_number.chomp!
-  number = Person.new(takes_number)
-  if number.save
-    puts "#{takes_number} has been added."
-    record_desired_outcomes_for(number)
+def add_person
+  puts "Who are you?".red
+  person_name = gets
+  return unless person_name
+  person_name.chomp!
+  person = Person.new(name: person_name)
+  if person.save
+    puts "#{person.name} has been added.".red
+    options
   else
-    puts number.errors
+    puts "'#{person.name}' " + person.errors[:name].join()
+    add_person
+  end
+end
+
+
+def user_current
+  puts "What is your Username?".red
+  person_name = gets
+  return unless person_name
+  person_name.chomp!
+  person = Person.find_by(name: person_name)
+  if person
+    person_name.chomp!
+    puts "#{person_name} is the current user.".red
+    add_hangloose(person)
+  else
+    puts "#{person_name} is not a user.".orange
+    user_current
+  end
+end
+
+def add_hangloose(person)
+  puts "How many times did you hangloose today?".green
+  input = gets.to_i
+  number = Number.new(name: input)
+  if number.save
+    person.update(number_id: number.id)
+    puts "#{input} has been added to your hangloose count.".red
+    options
+  else
+    puts "'#{input}' " + input.errors[:name].join()
     add_hangloose
   end
 end
 
-def view_graph
-  puts "Your graph for the day!"
+
+def ask_hangloose
+  puts "What is your username?".red
+  person_name = gets
+  return unless person_name
+  person_name.chomp!
+  person = Person.find_by(name: person_name)
+  if person
+    puts "#{person_name} is the current user.".red
+    puts "How many times did you hangloose this time?".green
+    input = gets.to_i
+    return unless input
+    input.to_i
+    num = Number.find_by(id: person.number_id)
+    if num
+      total = num.name + input
+      num.update(name: total)
+      puts "#{input} has been added to hangloose count.".red
+    end
+    options
+  else
+    puts "#{type} is not a user.".orange
+    ask_hangloose
+  end
 end
 
-def just_hang
-  puts "Just hangloose man!"
+
+
+def view_graph
+  puts "What is your username?".red
+  person_name = gets
+  return unless person_name
+  person_name.chomp!
+  person = Person.find_by(name: person_name)
+  if person
+    puts "#{person.name} is the current user.".green
+    num = Number.find_by(id: person.number_id)
+    puts num.name
+    if num.name == 0
+      puts Graphs.graph_count_0
+    elsif num.name == 1
+      puts Graphs.graph_count_1
+    elsif num.name == 2
+      puts Graphs.graph_count_2
+    elsif num.name == 3
+      puts Graphs.graph_count_3
+    elsif num.name == 4
+      puts Graphs.graph_count_4
+    elsif num.name == 5
+      puts Graphs.graph_count_5
+    elsif num.name == 6
+      puts Graphs.graph_count_6
+    elsif num.name == 7
+      puts Graphs.graph_count_7
+    elsif num.name == 8
+      puts Graphs.graph_count_8
+    elsif num.name == 9
+      puts Graphs.graph_count_9
+    elsif num.name == 10
+      puts Graphs.graph_count_10
+    elsif num.name == 11
+      puts Graphs.graph_count_11
+    elsif num.name == 12
+      puts Graphs.graph_count_12
+    elsif num.name == 13
+      puts Graphs.graph_count_13
+    elsif num.name == 14
+      puts Graphs.graph_count_14
+    elsif num.name == 15
+      puts Graphs.graph_count_15
+    elsif num.name == 16
+      puts Graphs.graph_count_16
+    elsif num.name == 17
+      puts Graphs.graph_count_17
+    elsif num.name == 18
+      puts Graphs.graph_count_18
+    elsif num.name == 19
+      puts Graphs.graph_count_19
+    elsif num.name == 20
+      puts Graphs.graph_count_20
+    end
+    options
+  end
 end
+
+
+
+
+def clear_hangloose
+  puts "What is your username?".red
+  person_name = gets
+  return unless person_name
+  person_name.chomp!
+  person = Person.find_by(name: person_name)
+  if person
+    puts "#{person_name} is the current user.".red
+    puts "Would you like to clear your hangloose count? Answer 'yes' or 'no'.".green
+    input = gets
+    return unless input
+    input.chomp!
+    num = Number.find_by(id: person.number_id)
+    if input == 'yes'
+      total = num.name == 0
+      num.update(name: total)
+      puts "Your hangloose count has been cleared.".red
+    elsif input == 'no'
+      puts "Your hangloose count remains the same.".green
+    end
+    options
+  else
+    puts "#{type} is not a user.".orange
+    clear_hangloose
+  end
+
+end
+
+
+
+
+def options
+  puts "To go back to main menu enter 'opt'.".blue
+  input = gets
+  return unless input
+  input.chomp!
+  if input == 'opt'
+    get_menu_selection
+  end
+
+end
+
+
+
+
+
+
+
+def hangloose_ascii
+  hangloose = "
+______________$$$$$$$$$
+_____________$$$$$$$$$$$    Just hangloose man!
+_____________$$$$$$$$$$$$______________________________$$$$$,
+_____________`$$$$$$$$$$$____________________________$$$$$$$$
+______________`$$$$$$$$$$$______$$$_______$$$_______$$$$$$$$'
+_______________`$$$$$$$$$$$___$$$$$$$___$$$$$$$____$$$$$$$$'
+________________`$$$$$$$$$$$_$$$$$$$$$_$$$$$$$$$__$$$$$$$$'
+_________________`$$$$$$$$$$_$$$$$$$$_$$$$$$$$$__$$$$$$$
+____$$$$$$$$______`$$$$$$$$$$_$$$$$$$$_$$$$$$$$$_$$$$$$$'
+__$$$$$$$$$$$$_____`$$$$$$$$$_$$$$$$$$_$$$$$$$$$_$$$$$$
+_$$$$$$$$$$$$$$$$__$$$$$$$$$$_$$$$$$$$_$$$$$$$$$_$$$$$$'
+_$$$$$$$$$$$$$$$$$$$$$$$$$$$$_$$$$$$$$_$$$$$$$$$_$$$$$'
+___'$$$$$$$$$$$$$$$$$$$$$$$$$_$$$$$$$$_$_$$$$$$$_$$$$$'
+________`$$$$$$$$$$$$$$$$$$$$_$$$$$$__$$_$$$$$$_$$$$'
+__________`$$$$$$$$$$$$$$$$$$$,``'`,$$$$,______,$$$$_
+___________'$$$$$$$$$$$$$$$$$$$$$$_$$$$$$$$$$$$$$$'
+_____________'$$$$$$$$$$$$$$$$$$$$$_$$$$$$$$$$$$$'
+_______________'$$$$$$$$$$$$$$$$$$$_$$$$$$$$$$$$'
+__________________'$$$$$$$$$$$$$$$$_$$$$$$$$$$'
+___________________'$$$$$$$$$$$$$$$$_$$$$$$$'
+_____________________$$$$$$$$$$$$$$$$$$$$$
+　░▐█░▐█ ▄▀▄ █▄─█ ▄▀▀───░██─── ▄▀▄ ▄▀▄ ▄▀▀ █▀▀
+　░▐████ █▀█ █─▀█ █─▀▌──░██─── █─█ █─█ ─▀▄ █▀▀
+　░▐█░▐█ ▀─▀ ▀──▀ ▀▀▀───░██▄▄█ ─▀─ ─▀─ ▀▀─ ▀▀▀
+
+
+"
+  hangloose = hangloose.chars
+  hangloose.each do|ch|
+    sleep(1.0/120.0) # When running tests comment this line out, causes tests to be slow.
+    print "#{ch}"
+  end
+  options
+end
+
 
 
 
 def get_menu_selection
-  puts menu
+  puts menu.blue
   input = gets
   return unless input
   input.chomp!
   if input == "1"
-    add_hangloose
+    # add_hangloose
+    add_person
   elsif input == "2"
-    view_graph
+    user_current
   elsif input == "3"
-    just_hang
+    ask_hangloose
+  elsif input == "4"
+    view_graph
+  elsif input == "5"
+    clear_hangloose
+  elsif input == "6"
+    hangloose_ascii
   else
-    puts "'4' not a valid selection"
+    puts "Not a valid selection"
     get_menu_selection
   end
 end

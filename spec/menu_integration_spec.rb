@@ -3,7 +3,7 @@ describe "Menu Integration" do
    let(:menu_text) do
  <<EOS
  Hello there! What would you want to do? (Enter the number for your choice)
-   1. Enter your hangloose count.
+   1. Add a person.
    2. View your hangloose graph.
    3. Just hangloose.
  EOS
@@ -17,13 +17,13 @@ describe "Menu Integration" do
    context "the user selects 1" do
      let(:shell_output){ run_hl_with_input("1") }
      it "should print the next menu" do
-       shell_output.should include("How many times did you hangloose?")
+       shell_output.should include("Add a person")
      end
    end
    context "the user selects 2" do
      let(:shell_output){ run_hl_with_input("2") }
      it "should print the next menu" do
-       shell_output.should include("Your graph for the day!")
+       shell_output.should include("Add hangloose count.")
      end
    end
    context "the user selects 3" do
