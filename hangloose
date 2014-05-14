@@ -166,6 +166,20 @@ def view_graph
       puts Graphs.graph_count_19
     elsif num.name == 20
       puts Graphs.graph_count_20
+    else
+      puts "You have hungloose 20 times and have exceeded your limit for today.".red
+      puts "Would you like to clear your hangloose count to continue hanging loose? Enter 'yes' or 'no'.".green
+      input = gets
+      return unless input
+      input.chomp!
+      num = Number.find_by(id: person.number_id)
+      if input == 'yes'
+        total = num.name == 0
+        num.update(name: total)
+        puts "Your hangloose count has been cleared.".red
+      elsif input == 'no'
+        puts "Your hangloose count remains the same.".green
+      end
     end
     options
   end
